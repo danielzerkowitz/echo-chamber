@@ -28,7 +28,7 @@ export function Sidebar() {
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [menuOpen, setMenuOpen] = useState<"new" | "kebab" | null>(null);
-  const [modal, setModal] = useState<"bot" | "dm" | "group" | "call" | null>(null);
+  const [modal, setModal] = useState<"bot" | "chat" | "call" | null>(null);
   const [editBot, setEditBot] = useState<Bot | null>(null);
 
   const botsById = useMemo(() => new Map(bots.map((b) => [b.id, b])), [bots]);
@@ -95,8 +95,7 @@ export function Sidebar() {
             <div className="absolute right-0 top-11 z-40 w-48 rounded-md bg-wa-panel py-1 shadow-xl ring-1 ring-wa-border">
               {[
                 { label: "🤖 New bot", action: () => setModal("bot") },
-                { label: "💬 New chat", action: () => setModal("dm") },
-                { label: "👥 New group", action: () => setModal("group") },
+                { label: "💬 New chat", action: () => setModal("chat") },
                 { label: "📞 Bot call", action: () => setModal("call") },
               ].map((item) => (
                 <button
@@ -164,7 +163,7 @@ export function Sidebar() {
                   </button>
                 ) : (
                   <button
-                    onClick={() => setModal("dm")}
+                    onClick={() => setModal("chat")}
                     className="rounded-full bg-wa-accent px-5 py-2 font-medium text-white transition hover:bg-wa-accent-deep"
                   >
                     💬 Start a chat
@@ -242,7 +241,7 @@ export function Sidebar() {
 
       {modal === "bot" && <BotEditor bot={null} onClose={() => setModal(null)} />}
       {editBot && <BotEditor bot={editBot} onClose={() => setEditBot(null)} />}
-      {(modal === "dm" || modal === "group" || modal === "call") && (
+      {(modal === "chat" || modal === "call") && (
         <NewChatModal mode={modal} onClose={() => setModal(null)} />
       )}
     </aside>

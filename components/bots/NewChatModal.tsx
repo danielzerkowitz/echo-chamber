@@ -6,7 +6,7 @@ import { Modal } from "@/components/ui/Modal";
 import { useAppData } from "@/components/providers/AppData";
 import { BotAvatar } from "@/components/bots/BotAvatar";
 
-type Mode = "dm" | "group" | "call";
+type Mode = "chat" | "call";
 
 export function NewChatModal({ mode, onClose }: { mode: Mode; onClose: () => void }) {
   const { bots, refresh } = useAppData();
@@ -16,13 +16,12 @@ export function NewChatModal({ mode, onClose }: { mode: Mode; onClose: () => voi
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  const max = mode === "dm" ? 1 : mode === "call" ? 2 : 6;
-  const min = mode === "dm" ? 1 : 2;
+  const max = mode === "call" ? 2 : 6;
+  const min = 1;
 
   function toggle(id: string) {
     setSelected((prev) => {
       if (prev.includes(id)) return prev.filter((x) => x !== id);
-      if (mode === "dm") return [id];
       if (prev.length >= max) return prev;
       return [...prev, id];
     });
@@ -30,7 +29,11 @@ export function NewChatModal({ mode, onClose }: { mode: Mode; onClose: () => voi
 
   async function create() {
     if (selected.length < min) {
-      setError(mode === "dm" ? "pick a bot" : `pick at least ${min} bots`);
+      setError(mode === "call" ? "pick two bots" : "pick at least one bot");
+      return;
+    }
+    if (mode === "call" && selected.length !== 2) {
+      setError("a call needs exactly two bots");
       return;
     }
     setBusy(true);
@@ -50,9 +53,9 @@ export function NewChatModal({ mode, onClose }: { mode: Mode; onClose: () => voi
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            type: mode,
+            type: selected.length === 1 ? "dm" : "group",
             botIds: selected,
-            ...(mode === "group" && title.trim() ? { title: title.trim() } : {}),
+            ...(selected.length > 1 && title.trim() ? { title: title.trim() } : {}),
           }),
         });
         const body = await res.json();
@@ -68,18 +71,17 @@ export function NewChatModal({ mode, onClose }: { mode: Mode; onClose: () => voi
   }
 
   const titles: Record<Mode, string> = {
-    dm: "New chat",
-    group: "New group",
+    chat: "New chat",
     call: "Start a call",
   };
 
   return (
     <Modal title={titles[mode]} onClose={onClose}>
       {bots.length === 0 ? (
-        <p className="text-sm text-wa-text-soft">Create a bot first — use the ➕ menu.</p>
+        <p className="text-sm text-wa-text-soft">Create a bot first — use the “New bot” entry at the bottom of the sidebar.</p>
       ) : (
         <div className="space-y-4">
-          {mode === "group" && (
+          {mode === "chat" && selected.length > 1 && (
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -91,8 +93,10 @@ export function NewChatModal({ mode, onClose }: { mode: Mode; onClose: () => voi
           {mode === "call" && (
             <p className="text-sm text-wa-text-soft">Pick two bots — they&apos;ll talk live, and you can chime in.</p>
           )}
-          {mode === "group" && (
-            <p className="text-sm text-wa-text-soft">Pick 2–6 bots ({selected.length} selected).</p>
+          {mode === "chat" && (
+            <p className="text-sm text-wa-text-soft">
+              Pick 1 bot for a one-on-one chat, or up to 6 for a group ({selected.length} selected).
+            </p>
           )}
           <div className="max-h-72 space-y-1 overflow-y-auto">
             {bots.map((bot) => (

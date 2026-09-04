@@ -90,6 +90,8 @@ export function AppDataProvider({ userId, children }: { userId: string; children
           setChats((prev) =>
             prev.some((c) => c.id === (payload.new as Chat).id) ? prev : [payload.new as Chat, ...prev]
           );
+        } else if (payload.eventType === "UPDATE") {
+          setChats((prev) => prev.map((c) => (c.id === (payload.new as Chat).id ? (payload.new as Chat) : c)));
         } else if (payload.eventType === "DELETE") {
           setChats((prev) => prev.filter((c) => c.id !== (payload.old as Chat).id));
         }

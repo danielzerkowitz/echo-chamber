@@ -124,11 +124,11 @@ export default function ChatPage({ params }: { params: Promise<{ chatId: string 
                   : (headerBot?.model ?? "")}
           </p>
         </div>
-        {chat.type === "group" && chatBots.length < 6 && invitable.length > 0 && (
+        {chatBots.length < 6 && invitable.length > 0 && (
           <button
             onClick={() => setAddBotOpen(true)}
             className="rounded-full p-2 text-wa-text-soft hover:bg-wa-border"
-            title="Add bot"
+            title={chat.type === "dm" ? "Add a bot (turns this into a group)" : "Add bot"}
           >
             ➕
           </button>
@@ -263,7 +263,7 @@ export default function ChatPage({ params }: { params: Promise<{ chatId: string 
       )}
 
       {addBotOpen && (
-        <Modal title="Add a bot to the group" onClose={() => setAddBotOpen(false)}>
+        <Modal title={chat.type === "dm" ? "Add a bot (creates a group)" : "Add a bot to the group"} onClose={() => setAddBotOpen(false)}>
           <div className="max-h-72 space-y-1 overflow-y-auto">
             {invitable.map((b) => (
               <button

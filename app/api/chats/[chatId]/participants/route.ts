@@ -21,7 +21,6 @@ export async function POST(request: NextRequest, ctx: { params: Promise<{ chatId
     .eq("user_id", auth.user.id)
     .single();
   if (!chat) return jsonError("chat not found", 404);
-  if (chat.type !== "group") return jsonError("can only add bots to group chats", 400);
 
   const { data: bot } = await admin
     .from("bots")
@@ -41,6 +40,11 @@ export async function POST(request: NextRequest, ctx: { params: Promise<{ chatId
   if (error) {
     const message = error.message.includes("at most 6") ? "group chats support at most 6 bots" : error.message;
     return jsonError(message, 409);
+  }
+
+  // Adding a bot to a one-on-one chat turns it into a group (WhatsApp-style).
+  if (chat.type === "dm") {
+    await admin.from("chats").update({ type: "group" }).eq("id", chatId);
   }
 
   await admin.from("messages").insert({
