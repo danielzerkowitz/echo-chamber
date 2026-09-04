@@ -153,11 +153,27 @@ export function Sidebar() {
         {filtered.length === 0 && (
           <div className="p-8 text-center text-sm text-wa-text-soft">
             {chats.length === 0 ? (
-              <>
-                No chats yet.
-                <br />
-                Create a bot with the ➕ menu, then start a chat.
-              </>
+              <div className="flex flex-col items-center gap-3">
+                <p>No chats yet.</p>
+                {bots.length === 0 ? (
+                  <button
+                    onClick={() => setModal("bot")}
+                    className="rounded-full bg-wa-accent px-5 py-2 font-medium text-white transition hover:bg-wa-accent-deep"
+                  >
+                    🤖 Create your first bot
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setModal("dm")}
+                    className="rounded-full bg-wa-accent px-5 py-2 font-medium text-white transition hover:bg-wa-accent-deep"
+                  >
+                    💬 Start a chat
+                  </button>
+                )}
+                <p className="text-xs">
+                  (or use the <span className="font-semibold">new-chat icon</span> in the top bar)
+                </p>
+              </div>
             ) : (
               "No chats match."
             )}
