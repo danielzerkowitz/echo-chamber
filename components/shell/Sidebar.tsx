@@ -212,10 +212,9 @@ export function Sidebar() {
           );
         })}
         {/* bots directory */}
-        {bots.length > 0 && (
-          <div className="mt-2 border-t border-wa-border px-3 py-2">
-            <p className="mb-1 px-1 text-xs font-medium uppercase tracking-wide text-wa-text-soft">Your bots</p>
-            {bots.map((b) => (
+        <div className="mt-2 border-t border-wa-border px-3 py-2">
+          <p className="mb-1 px-1 text-xs font-medium uppercase tracking-wide text-wa-text-soft">Your bots</p>
+          {bots.map((b) => (
               <button
                 key={b.id}
                 onClick={() => setEditBot(b)}
@@ -229,8 +228,16 @@ export function Sidebar() {
                 <span className="text-xs text-wa-text-soft">edit</span>
               </button>
             ))}
-          </div>
-        )}
+          <button
+            onClick={() => setModal("bot")}
+            className="flex w-full items-center gap-3 rounded-md p-2 text-left hover:bg-wa-panel-deep"
+          >
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-wa-accent text-lg text-white">
+              +
+            </span>
+            <p className="text-sm font-medium text-wa-accent">New bot</p>
+          </button>
+        </div>
       </div>
 
       {modal === "bot" && <BotEditor bot={null} onClose={() => setModal(null)} />}
