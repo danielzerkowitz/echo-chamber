@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="420" viewBox="0 0 420 420">
+  <g fill="none" stroke="#9aa5ab" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.28">
+    <!-- speech bubble -->
+    <path d="M40 50 h56 a10 10 0 0 1 10 10 v28 a10 10 0 0 1 -10 10 h-34 l-14 12 v-12 h-8 a10 10 0 0 1 -10 -10 v-28 a10 10 0 0 1 10 -10 z"/>
+    <line x1="52" y1="68" x2="92" y2="68"/>
+    <line x1="52" y1="80" x2="82" y2="80"/>
+    <!-- phone -->
+    <path d="M300 60 c8 18 26 36 44 44 l10 -10 c3 -3 8 -3 11 0 l10 10 c3 3 3 8 0 11 l-8 8 c-4 4 -10 5 -15 3 -30 -12 -52 -34 -64 -64 -2 -5 -1 -11 3 -15 l8 -8 c3 -3 8 -3 11 0 l10 10 c3 3 3 8 0 11 z"/>
+    <!-- robot head -->
+    <rect x="160" y="180" width="60" height="46" rx="10"/>
+    <circle cx="178" cy="200" r="5"/>
+    <circle cx="202" cy="200" r="5"/>
+    <line x1="178" y1="214" x2="202" y2="214"/>
+    <line x1="190" y1="168" x2="190" y2="180"/>
+    <circle cx="190" cy="165" r="3"/>
+    <!-- star -->
+    <path d="M330 200 l6 14 15 2 -11 10 3 15 -13 -8 -13 8 3 -15 -11 -10 15 -2 z"/>
+    <!-- coffee cup -->
+    <path d="M60 300 h48 v26 a20 20 0 0 1 -20 20 h-8 a20 20 0 0 1 -20 -20 z"/>
+    <path d="M108 306 h8 a10 10 0 0 1 0 20 h-8"/>
+    <path d="M72 288 c0 -6 6 -6 6 -12 M88 288 c0 -6 6 -6 6 -12"/>
+    <!-- music note -->
+    <path d="M250 320 v-36 l28 -8 v36"/>
+    <circle cx="243" cy="322" r="7"/>
+    <circle cx="271" cy="314" r="7"/>
+    <!-- heart -->
+    <path d="M360 330 c-8 -10 -24 -6 -24 6 0 10 24 24 24 24 s24 -14 24 -24 c0 -12 -16 -16 -24 -6 z"/>
+    <!-- paper plane -->
+    <path d="M120 120 l60 -20 -34 52 -6 -20 z"/>
+    <line x1="146" y1="132" x2="180" y2="100"/>
+    <!-- wifi -->
+    <path d="M280 250 a30 30 0 0 1 42 0 M287 259 a20 20 0 0 1 28 0 M294 268 a10 10 0 0 1 14 0"/>
+    <circle cx="301" cy="277" r="2.5"/>
+    <!-- clock -->
+    <circle cx="80 " cy="200" r="18"/>
+    <path d="M80 190 v10 l8 6"/>
+    <!-- lightbulb -->
+    <path d="M370 100 a16 16 0 0 1 8 30 v6 h-16 v-6 a16 16 0 0 1 8 -30 z"/>
+    <line x1="364" y1="142" x2="376" y2="142"/>
+    <!-- camera -->
+    <rect x="180" y="360" width="52" height="36" rx="8"/>
+    <circle cx="206" cy="378" r="10"/>
+    <path d="M192 360 l6 -8 h16 l6 8"/>
+  </g>
+</svg>

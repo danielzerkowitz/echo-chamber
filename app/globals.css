@@ -1,26 +1,106 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* WhatsApp-ish palette, light values; dark values override via .dark below */
+  --color-wa-app: var(--wa-app);
+  --color-wa-panel: var(--wa-panel);
+  --color-wa-panel-deep: var(--wa-panel-deep);
+  --color-wa-header: var(--wa-header);
+  --color-wa-chat: var(--wa-chat);
+  --color-wa-bubble-in: var(--wa-bubble-in);
+  --color-wa-bubble-out: var(--wa-bubble-out);
+  --color-wa-text: var(--wa-text);
+  --color-wa-text-soft: var(--wa-text-soft);
+  --color-wa-border: var(--wa-border);
+  --color-wa-accent: #00a884;
+  --color-wa-accent-deep: #008069;
+  --color-wa-check: #53bdeb;
+  --font-sans: var(--font-app-sans);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --wa-app: #f0f2f5;
+  --wa-panel: #ffffff;
+  --wa-panel-deep: #f0f2f5;
+  --wa-header: #008069;
+  --wa-chat: #efeae2;
+  --wa-bubble-in: #ffffff;
+  --wa-bubble-out: #d9fdd3;
+  --wa-text: #111b21;
+  --wa-text-soft: #667781;
+  --wa-border: #e9edef;
+  --wa-doodle-opacity: 0.4;
+}
+
+.dark {
+  --wa-app: #0c1317;
+  --wa-panel: #111b21;
+  --wa-panel-deep: #202c33;
+  --wa-header: #202c33;
+  --wa-chat: #0b141a;
+  --wa-bubble-in: #202c33;
+  --wa-bubble-out: #005c4b;
+  --wa-text: #e9edef;
+  --wa-text-soft: #8696a0;
+  --wa-border: #222d34;
+  --wa-doodle-opacity: 0.06;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--wa-app);
+  color: var(--wa-text);
 }
+
+/* Tiled doodle background for the chat pane */
+.wa-doodle {
+  background-color: var(--wa-chat);
+  background-image: url("/doodle.svg");
+  background-size: 420px;
+}
+
+/* Bubble tails */
+.bubble-in::before,
+.bubble-out::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 12px;
+  height: 12px;
+}
+.bubble-in::before {
+  left: -8px;
+  background: var(--wa-bubble-in);
+  clip-path: polygon(100% 0, 100% 100%, 0 0);
+}
+.bubble-out::before {
+  right: -8px;
+  background: var(--wa-bubble-out);
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+
+/* Typing indicator dots */
+@keyframes typing-bounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+.typing-dot {
+  animation: typing-bounce 1.2s infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.15s; }
+.typing-dot:nth-child(3) { animation-delay: 0.3s; }
+
+/* Call screen pulse */
+@keyframes call-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(0, 168, 132, 0.4); }
+  70% { box-shadow: 0 0 0 18px rgba(0, 168, 132, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 168, 132, 0); }
+}
+.call-pulse {
+  animation: call-pulse 2s infinite;
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-thumb { background: rgba(134, 150, 160, 0.35); border-radius: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
