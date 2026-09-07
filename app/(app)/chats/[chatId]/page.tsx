@@ -21,12 +21,13 @@ import type { SseEvent } from "@/lib/sse";
 export default function ChatPage({ params }: { params: Promise<{ chatId: string }> }) {
   const { chatId } = use(params);
   const router = useRouter();
-  const { userId, bots, chats, participants, supabase } = useAppData();
+  const { userId, bots, chats, participants, supabase, refresh } = useAppData();
   const { messages, addMessage } = useRealtimeMessages(chatId);
   const [draft, setDraft] = useState("");
   const [pendingIds, setPendingIds] = useState<Set<string>>(new Set());
   const [addBotOpen, setAddBotOpen] = useState(false);
   const [callPickerOpen, setCallPickerOpen] = useState(false);
+  const [headerMenuOpen, setHeaderMenuOpen] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const chat = chats.find((c) => c.id === chatId);
@@ -96,6 +97,17 @@ export default function ChatPage({ params }: { params: Promise<{ chatId: string 
     void conductor.kick();
   }
 
+  async function deleteChat() {
+    if (!chat) return;
+    const label = chat.type === "group" ? "this group" : "this chat";
+    if (!confirm(`Delete ${label}? All its messages are gone for good (your bots stick around).`)) return;
+    setHeaderMenuOpen(false);
+    const { error } = await supabase.from("chats").delete().eq("id", chatId);
+    if (error) return;
+    await refresh();
+    router.push("/");
+  }
+
   if (!chat) {
     return <div className="flex h-full items-center justify-center bg-wa-panel-deep text-wa-text-soft">Loading…</div>;
   }
@@ -142,10 +154,32 @@ export default function ChatPage({ params }: { params: Promise<{ chatId: string 
             📞
           </button>
         )}
+        <div className="relative">
+          <button
+            onClick={() => setHeaderMenuOpen(!headerMenuOpen)}
+            className="rounded-full p-2 text-wa-text-soft hover:bg-wa-border"
+            title="Chat menu"
+            aria-label="Chat menu"
+          >
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M12 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" />
+            </svg>
+          </button>
+          {headerMenuOpen && (
+            <div className="absolute right-0 top-10 z-40 w-44 rounded-md bg-wa-panel py-1 shadow-xl ring-1 ring-wa-border">
+              <button
+                onClick={() => void deleteChat()}
+                className="block w-full px-4 py-2 text-left text-sm text-red-500 hover:bg-wa-panel-deep"
+              >
+                🗑️ Delete {chat.type === "group" ? "group" : "chat"}
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* messages */}
-      <div className="wa-doodle flex-1 overflow-y-auto py-3">
+      <div className="wa-doodle flex-1 overflow-y-auto py-3" onClick={() => setHeaderMenuOpen(false)}>
         {messages.map((msg, i) => {
           const prev = messages[i - 1];
           const divider = !prev || !sameDay(prev.created_at, msg.created_at);
