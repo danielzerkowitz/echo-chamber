@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import type { LlmRequest, StreamEvent } from "./types";
+import { modelSupportsTemperature } from "./models";
 
 export async function* streamOpenAI(req: LlmRequest): AsyncGenerator<StreamEvent> {
   const client = new OpenAI({ apiKey: req.apiKey });
@@ -14,7 +15,9 @@ export async function* streamOpenAI(req: LlmRequest): AsyncGenerator<StreamEvent
       model: req.model,
       stream: true,
       max_tokens: req.maxTokens,
-      ...(req.temperature != null ? { temperature: req.temperature } : {}),
+      ...(req.temperature != null && modelSupportsTemperature("openai", req.model)
+        ? { temperature: req.temperature }
+        : {}),
       ...(tools && tools.length > 0 ? { tools } : {}),
       messages: [
         { role: "system", content: req.system },

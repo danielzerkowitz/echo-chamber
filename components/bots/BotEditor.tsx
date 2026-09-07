@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Modal } from "@/components/ui/Modal";
 import { useAppData } from "@/components/providers/AppData";
 import { MODELS } from "@/lib/llm/models";
 import type { Bot } from "@/lib/db/types";
-import type { Provider } from "@/lib/llm/types";
+import type { ModelInfo, Provider } from "@/lib/llm/types";
 
 const EMOJI_CHOICES = ["🤖", "🧠", "👻", "🦊", "🐙", "🦉", "🐸", "🌵", "🔥", "🎩", "🧙", "👾", "🍕", "🎸", "☕", "🚀"];
 const COLOR_CHOICES = ["#00a884", "#53bdeb", "#a791f5", "#f5a97f", "#ed8796", "#eed49f", "#7dc4e4", "#8bd5ca"];
@@ -20,9 +20,29 @@ export function BotEditor({ bot, onClose }: { bot: Bot | null; onClose: () => vo
   const [temperature, setTemperature] = useState<string>(bot?.temperature?.toString() ?? "");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [models, setModels] = useState<ModelInfo[]>(MODELS);
 
-  const model = MODELS.find((m) => m.id === modelId) ?? MODELS[0];
+  // Live model list from the providers (per saved API key); curated fallback.
+  useEffect(() => {
+    let cancelled = false;
+    void fetch("/api/models")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((body: { models: ModelInfo[] } | null) => {
+        if (!cancelled && body && body.models.length > 0) setModels(body.models);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const model =
+    models.find((m) => m.id === modelId) ??
+    MODELS.find((m) => m.id === modelId) ??
+    ({ id: modelId, label: modelId, provider: "anthropic", supportsTemperature: false } as ModelInfo);
   const providersWithKey = new Set(keys.map((k) => k.provider));
+  // Keep the bot's current model selectable even if the live list omits it.
+  const selectable = models.some((m) => m.id === modelId) ? models : [model, ...models];
 
   async function save() {
     if (!name.trim()) {
@@ -127,7 +147,7 @@ export function BotEditor({ bot, onClose }: { bot: Bot | null; onClose: () => vo
             onChange={(e) => setModelId(e.target.value)}
             className="w-full rounded-md border border-wa-border bg-wa-panel-deep px-3 py-2 text-wa-text outline-none focus:border-wa-accent"
           >
-            {MODELS.map((m) => (
+            {selectable.map((m) => (
               <option key={m.id} value={m.id}>
                 {m.label} ({m.provider})
               </option>

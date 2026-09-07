@@ -1,6 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { LlmRequest, StreamEvent } from "./types";
-import { modelInfo } from "./models";
+import { modelSupportsTemperature } from "./models";
 
 export async function* streamAnthropic(req: LlmRequest): AsyncGenerator<StreamEvent> {
   const client = new Anthropic({ apiKey: req.apiKey });
@@ -11,7 +11,7 @@ export async function* streamAnthropic(req: LlmRequest): AsyncGenerator<StreamEv
     input_schema: t.parameters as Anthropic.Tool.InputSchema,
   }));
 
-  const supportsTemperature = modelInfo(req.model)?.supportsTemperature ?? false;
+  const supportsTemperature = modelSupportsTemperature("anthropic", req.model);
 
   const params: Anthropic.MessageCreateParamsStreaming = {
     model: req.model,

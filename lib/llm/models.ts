@@ -14,6 +14,17 @@ export function modelInfo(id: string): ModelInfo | undefined {
   return MODELS.find((m) => m.id === id);
 }
 
+// Newest Anthropic models (Claude 4.6+ generations) reject sampling params;
+// OpenAI's o-series reasoning models reject temperature too. Used for both the
+// curated list and dynamically fetched models.
+export function modelSupportsTemperature(provider: Provider, id: string): boolean {
+  if (provider === "anthropic") {
+    if (/claude-(opus-5|sonnet-5|fable|mythos|opus-4-[6-9]|sonnet-4-6)/.test(id)) return false;
+    return true;
+  }
+  return !/^o[0-9]/.test(id);
+}
+
 export function modelsForProvider(provider: Provider): ModelInfo[] {
   return MODELS.filter((m) => m.provider === provider);
 }
